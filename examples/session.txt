@@ -1,0 +1,19 @@
+# Build a book
+S 10100 50
+S 10100 30
+S 10105 100
+B 10095 40
+B 10090 60
+P
+# Aggressive buy sweeps the 10100 level in time priority, then rests at 10102
+B 10102 90
+P
+# Cancel and amend
+C 4
+X 5 10090 20
+# Post-only that would cross is rejected; FOK with too little liquidity is rejected
+B 10105 10 POST
+B 10105 500 FOK
+# Market sell hits the bids
+MS 75
+P

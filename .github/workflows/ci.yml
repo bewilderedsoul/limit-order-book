@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+        mode: [release, asan-ubsan, tsan]
+    steps:
+      - uses: actions/checkout@v4
+      - name: configure
+        run: |
+          FLAGS=""
+          if [ "${{ matrix.mode }}" = "asan-ubsan" ]; then FLAGS="-DLOB_SANITIZE=ON"; fi
+          if [ "${{ matrix.mode }}" = "tsan" ]; then FLAGS="-DLOB_TSAN=ON"; fi
+          cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=RelWithDebInfo $FLAGS
+      - name: build
+        run: cmake --build build -j
+      - name: test
+        run: |
+          # TSan needs a fixed address-space layout on recent kernels
+          if [ "${{ matrix.mode }}" = "tsan" ]; then sudo sysctl vm.mmap_rnd_bits=28; fi
+          ./build/lob_tests
+      - name: replay demo
+        run: ./build/lob_replay examples/session.txt
+      - name: benchmark (smoke)
+        if: matrix.mode == 'release'
+        run: ./build/lob_bench 300000
