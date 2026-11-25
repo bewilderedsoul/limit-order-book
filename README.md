@@ -1,4 +1,5 @@
 # limit-order-book
+n[![ci](https://github.com/bewilderedsoul/limit-order-book/actions/workflows/ci.yml/badge.svg)](https://github.com/bewilderedsoul/limit-order-book/actions/workflows/ci.yml) ![C++20](https://img.shields.io/badge/C%2B%2B-20-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
 A single-instrument **limit order book and matching engine in C++20**, built for
 low and predictable latency: price-time priority, five order types, O(1) cancel,
